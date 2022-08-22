@@ -46,10 +46,27 @@ test {
     useJUnitPlatform()
 }
 
+task javadocJar(type: Jar, dependsOn: javadoc) {
+    archiveClassifier.set('javadoc')
+    from 'build/docs/javadoc'
+}
+
+task sourcesJar(type: Jar) {
+    from sourceSets.main.allSource
+    archiveClassifier.set('sources')
+}
+
+artifacts {
+    archives javadocJar
+    archives sourcesJar
+}
+
 publishing {
     publications {
         "$name"(MavenPublication) {
             from components.java
+            artifact javadocJar
+            artifact sourcesJar
             pom.withXml {
                 asNode().appendNode('name', name)
                 asNode().appendNode('description', description)
